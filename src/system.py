@@ -18,7 +18,7 @@ class ReccomnderSystem(object):
         self.maxbed = None
         self.minbath = None
         self.maxbath = None
-        self.prop_type = None
+        self.proptype = None
 #       self.neighborhood = None
 
         nrec = ListingReccomender(self.df_reviews)
@@ -26,27 +26,27 @@ class ReccomnderSystem(object):
                                                       df_reviews['name'].values,
                                                       posttagged = True)
 
-    def user_select(self, minbed, maxbed, minbath, maxbath, prop_type, neighborhood):
+    def user_select(self, minbed, maxbed, minbath, maxbath, proptype, neighborhood):
         self.minbed, self.maxbed = sorted([minbed,maxbed])
         self.minbath, self.maxbath = sorted([minbath,maxbath])
-        self.prop_type = prop_type
+        self.proptype = proptype
 #        self.neighborhood = neighborhood
 
         self.df_select = self.df_sample[(self.df_sample['bed']<=self.maxbed) &
                                   (self.df_sample['bed']>=self.minbed) &
                                   (self.df_sample['bath']<=self.maxbath) &
                                   (self.df_sample['bed']>=self.minbath) &
-                                  (self.df_sample['prop_type']==self.prop_type)&
+                                  (self.df_sample['proptype']==self.proptype)&
                                   (self.df_sample['street_neighborhood']==neighborhood)]\
                                   [['id','remarks']]
 
         self.df_select.reset_index(drop=True,inplace=True)
 
 ## PART I - RETURN LISTINGS BASED ON USER'S SPECIFICATIONS
-    def home_reccomender_dict(self, minbed, maxbed, minbath, maxbath, prop_type,
+    def home_reccomender_dict(self, minbed, maxbed, minbath, maxbath, proptype,
                               neighborhood, alt=False, alt_id=None):
         ## user selection data frame df_select
-        self.user_select(minbed,maxbed,minbath,maxbath,prop_type,neighborhood)
+        self.user_select(minbed,maxbed,minbath,maxbath,proptype,neighborhood)
 
         ## check if there is any match
         if self.df_select.shape[0]==0:
@@ -80,11 +80,12 @@ class ReccomnderSystem(object):
 
 ## PART II RETURN RECCOMENDED LISTINGS BASED ON USER'S SELECTIONS
     def listing_reccomender(self,selected_listing,neighborhood):
+
         _=self.home_reccomender_dict(self.minbed,
                                    self.maxbed,
                                    self.minbath,
                                    self.maxbath,
-                                   self.prop_type,
+                                   self.proptype,
                                    neighborhood)
         self.result_dict={}
         self.selected_listing = selected_listing
@@ -98,7 +99,7 @@ class ReccomnderSystem(object):
                                       self.maxbed,
                                       self.minbath,
                                       self.maxbath,
-                                      self.prop_type,
+                                      self.proptype,
                                       self.alt_neig_1,
                                       alt=True,
                                       alt_id=selected_listing)
@@ -112,7 +113,7 @@ class ReccomnderSystem(object):
                                       self.maxbed,
                                       self.minbath,
                                       self.maxbath,
-                                      self.prop_type,
+                                      self.proptype,
                                       self.alt_neig_2,
                                       alt=True,
                                       alt_id=selected_listing)
