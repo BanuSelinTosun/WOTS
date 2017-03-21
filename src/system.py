@@ -11,13 +11,15 @@ class ReccomnderSystem(object):
         self.reccomender_dictionary = None
         self.result_dict = None
         self.listings = None
+        self.alt_neig_1 = None
+        self.alt_neig_2 = None
 
         self.minbed = None
         self.maxbed = None
         self.minbath = None
         self.maxbath = None
         self.prop_type = None
-        self.neighborhood = None
+#       self.neighborhood = None
 
         nrec = ListingReccomender(self.df_reviews)
         self.neighborhood_dict = nrec.top_three_dictionary(df_reviews['reviews'].values,
@@ -28,14 +30,14 @@ class ReccomnderSystem(object):
         self.minbed, self.maxbed = sorted([minbed,maxbed])
         self.minbath, self.maxbath = sorted([minbath,maxbath])
         self.prop_type = prop_type
-        self.neighborhood = neighborhood
+#        self.neighborhood = neighborhood
 
         self.df_select = self.df_sample[(self.df_sample['bed']<=self.maxbed) &
                                   (self.df_sample['bed']>=self.minbed) &
                                   (self.df_sample['bath']<=self.maxbath) &
                                   (self.df_sample['bed']>=self.minbath) &
                                   (self.df_sample['prop_type']==self.prop_type)&
-                                  (self.df_sample['street_neighborhood']==self.neighborhood)]\
+                                  (self.df_sample['street_neighborhood']==neighborhood)]\
                                   [['id','remarks']]
 
         self.df_select.reset_index(drop=True,inplace=True)
@@ -77,41 +79,45 @@ class ReccomnderSystem(object):
             return self.listings
 
 ## PART II RETURN RECCOMENDED LISTINGS BASED ON USER'S SELECTIONS
-    def listing_reccomender(self,selected_listing):
+    def listing_reccomender(self,selected_listing,neighborhood):
+        _=self.home_reccomender_dict(self.minbed,
+                                   self.maxbed,
+                                   self.minbath,
+                                   self.maxbath,
+                                   self.prop_type,
+                                   neighborhood)
         self.result_dict={}
         self.selected_listing = selected_listing
 
-        self.result_dict[self.neighborhood] = self.reccomender_dictionary[self.selected_listing]
+        self.result_dict[neighborhood] = self.reccomender_dictionary[self.selected_listing]
 
-        alt_neig_1, alt_neig_2 = self.neighborhood_dict[self.neighborhood]
+        self.alt_neig_1, self.alt_neig_2 = self.neighborhood_dict[neighborhood]
 
         # alt_neig_1
-        self.neighborhood = alt_neig_1
         _= self.home_reccomender_dict(self.minbed,
                                       self.maxbed,
                                       self.minbath,
                                       self.maxbath,
                                       self.prop_type,
-                                      self.neighborhood,
+                                      self.alt_neig_1,
                                       alt=True,
                                       alt_id=selected_listing)
 
-        self.result_dict[alt_neig_1] = self.reccomender_dictionary.\
+        self.result_dict[self.alt_neig_1] = self.reccomender_dictionary.\
                                                     get(selected_listing,
                                                         'sorry, no match found')
 
         # alt_neig_2
-        self.neighborhood = alt_neig_2
         _= self.home_reccomender_dict(self.minbed,
                                       self.maxbed,
                                       self.minbath,
                                       self.maxbath,
                                       self.prop_type,
-                                      self.neighborhood,
+                                      self.alt_neig_2,
                                       alt=True,
                                       alt_id=selected_listing)
 
-        self.result_dict[alt_neig_2] = self.reccomender_dictionary.\
+        self.result_dict[self.alt_neig_2] = self.reccomender_dictionary.\
                                                     get(selected_listing,
                                                         'sorry, no match found')
 
