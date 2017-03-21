@@ -3,11 +3,14 @@ import pandas as pd
 from reccomender import ListingReccomender
 
 class ReccomnderSystem(object):
-    def __init__(self,df_sample):
+    def __init__(self,df_sample,df_reviews):
         self.df_sample = df_sample
+        self.df_reviews = df_reviews
         self.df_select = None
 
         self.reccomender_dictionary = None
+        self.result_dict = None
+        self.listings = None
 
         self.minbed = None
         self.maxbed = None
@@ -16,6 +19,10 @@ class ReccomnderSystem(object):
         self.prop_type = None
         self.neighborhood = None
 
+        nrec = ListingReccomender(self.df_reviews)
+        self.neighborhood_dict = nrec.top_three_dictionary(df_reviews['reviews'].values,
+                                                      df_reviews['name'].values,
+                                                      posttagged = True)
 
     def user_select(self, minbed, maxbed, minbath, maxbath, prop_type, neighborhood):
         self.minbed, self.maxbed = sorted([minbed,maxbed])
@@ -33,7 +40,7 @@ class ReccomnderSystem(object):
 
         self.df_select.reset_index(drop=True,inplace=True)
 
-
+## PART I - RETURN LISTINGS BASED ON USER'S SPECIFICATIONS
     def home_reccomender_dict(self, minbed, maxbed, minbath, maxbath, prop_type,
                               neighborhood, alt=False, alt_id=None):
         ## user selection data frame df_select
@@ -53,6 +60,9 @@ class ReccomnderSystem(object):
                 self.reccomender_dictionary[self.df_select['id'].values[i]]\
                                 = np.setdiff1d(self.df_select['id'].values,
                                   self.df_select['id'].values[i])
+            self.listings = self.reccomender_dictionary.keys()
+            return self.listings
+
         else:
 
             self.df_select.reset_index(drop=True,inplace=True)
@@ -63,4 +73,46 @@ class ReccomnderSystem(object):
                                                self.df_select['id'].values,
                                                alt=alt,
                                                alt_id=alt_id)
-        return self.reccomender_dictionary
+            self.listings = self.reccomender_dictionary.keys()
+            return self.listings
+
+## PART II RETURN RECCOMENDED LISTINGS BASED ON USER'S SELECTIONS
+    def listing_reccomender(self,selected_listing):
+        self.result_dict={}
+        self.selected_listing = selected_listing
+
+        self.result_dict[self.neighborhood] = self.reccomender_dictionary[self.selected_listing]
+
+        alt_neig_1, alt_neig_2 = self.neighborhood_dict[self.neighborhood]
+
+        # alt_neig_1
+        self.neighborhood = alt_neig_1
+        _= self.home_reccomender_dict(self.minbed,
+                                      self.maxbed,
+                                      self.minbath,
+                                      self.maxbath,
+                                      self.prop_type,
+                                      self.neighborhood,
+                                      alt=True,
+                                      alt_id=selected_listing)
+
+        self.result_dict[alt_neig_1] = self.reccomender_dictionary.\
+                                                    get(selected_listing,
+                                                        'sorry, no match found')
+
+        # alt_neig_2
+        self.neighborhood = alt_neig_2
+        _= self.home_reccomender_dict(self.minbed,
+                                      self.maxbed,
+                                      self.minbath,
+                                      self.maxbath,
+                                      self.prop_type,
+                                      self.neighborhood,
+                                      alt=True,
+                                      alt_id=selected_listing)
+
+        self.result_dict[alt_neig_2] = self.reccomender_dictionary.\
+                                                    get(selected_listing,
+                                                        'sorry, no match found')
+
+        return self.result_dict
