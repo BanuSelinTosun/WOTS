@@ -9,7 +9,7 @@ df_reviews=pd.read_csv('data/street_reviews.csv')
 df_reviews.drop('Unnamed: 0', axis=1, inplace=True)
 df_sample=pd.read_csv('data/data_seattle.csv')
 df_sample.drop('Unnamed: 0', axis=1, inplace=True)
-column_names = ['bed','bath','address','neighborhood','price'] # add remarks later maybe
+column_names = ['bed','bath','address','neighborhood','price'] # 'address','neighborhood','price'
 recsys =S.ReccomnderSystem(df_sample,df_reviews)
 
 
@@ -36,15 +36,20 @@ def _return_selected(minbed,maxbed,minbath,maxbath,proptype,neighborhood):
     selected_list=recsys.input_func(minbed, maxbed, minbath, maxbath, proptype, neighborhood)
     if type(selected_list)==list:
         df = df_sample[df_sample['id'].isin(selected_list)][column_names]
+        df=df.head(5)
 
-        return jsonify(df.to_html(index=False, classes='table'))
+        return jsonify([
+            df.to_html(index=False, classes='table'),
+            _create_location_list(df_sample,selected_list)
+
+            ])
     else:
         return "Sorry, no match found. Please change your search options and try again :)"
 
 
-def _plot_table(df_sample,selected_list):
+def _create_location_list(df_sample,selected_list):
     df_plot = df_sample[df_sample['id'].isin(selected_list)]
-    return dfs[['price','latitude','longitude']].values.tolist()
+    return df_plot[['price','latitude','longitude']].values.tolist()
 
 def _lat_lng(df_sample,selected_list):
     lat = np.mean(df_sample['latitude'][df_sample['id'].isin(selected_list)].values)
