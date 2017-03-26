@@ -16,7 +16,6 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
 
 class TextCleaning(object):
 
-
     def _fix_abrv(self,text_):
         '''
         INPUT:
@@ -88,7 +87,7 @@ class TextCleaning(object):
         return cleaned_text_list
 
 
-class ListingReccomender(object):
+class Listingrecommender(object):
     def __init__(self,df_sample, combine_stopwords=True):
         self.df_sample = df_sample
         self.stopwords_= set(stopwords.words('english'))
