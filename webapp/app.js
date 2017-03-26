@@ -1,16 +1,14 @@
 let get_input_options = function() {
-    let minbed = $("input#minbed").val()
-    let maxbed = $("input#maxbed").val()
-    let minbath = $("input#minbath").val()
-    let maxbath = $("input#maxbath").val()
-    let proptype = $("input#proptype").val()
-    let neighborhood = $("input#neighborhood").val()
+    let minbed = $("select#minbed").val()
+    let minbath = $("select#minbath").val()
+    let proptype = $("select#proptype").val()
+    let neighborhood = $("select#neighborhood").val()
+    let maxprice = $("select#maxprice").val()
     return {'minbed': parseInt(minbed),
-            'maxbed': parseInt(maxbed),
             'minbath': parseInt(minbath),
-            'maxbath': parseInt(maxbath),
-            'proptype':proptype.toString(),
-            'neighborhood': neighborhood.toString()}
+            'proptype': proptype.toString(),
+            'neighborhood':neighborhood.toString(),
+            'maxprice': parseInt(maxprice)}
 };
 
 let send_options_json = function(options) {
@@ -19,15 +17,15 @@ let send_options_json = function(options) {
         contentType: "application/json; charset=utf-8",
         type: 'POST',
         success: function (data) {
-            display_solutions(data[0]);
-            build_map(data[1])
+            display_solutions(data['table']);
+            build_map(data['loc_list'],data['lat_long'])
         },
         data: JSON.stringify(options)
     });
 };
 
 let display_solutions = function(solutions) {
-    $("span#Listings").html(solutions)
+    $("table#table").html(solutions)
 
 };
 
@@ -46,10 +44,12 @@ let display_solutions = function(solutions) {
 ['$799,950', 47.673325, -122.383698],
 ['$589,950', 47.674049, -122.378128]];
 
-let build_map = function(locations){
+var lat_lng = {'lat' : 47.674609999999994, 'lng' : -122.38545900000001}
+
+let build_map = function(locations,lat_lng){
   var map = new google.maps.Map(document.getElementById('map'), {
     zoom: 12,
-    center: new google.maps.LatLng( 47.671280461538458, -122.38169815384616),
+    center: new google.maps.LatLng( lat_lng['lat'], lat_lng['lng']),
     mapTypeId: google.maps.MapTypeId.ROADMAP
   });
 
@@ -73,10 +73,20 @@ let build_map = function(locations){
 };
 
 $(document).ready(function() {
-    build_map(locations)
+    build_map(locations,lat_lng)
     $("button#find").click(function() {
         let options = get_input_options();
         send_options_json(options);
     })
 
 })
+
+$("#table tr").click(function(){
+   $(this).addClass('selected').siblings().removeClass('selected');
+   var value=$(this).find('td:first').html();
+   alert(value);
+});
+
+$('.ok').on('click', function(e){
+    alert($("#table tr.selected td:first").html());
+});

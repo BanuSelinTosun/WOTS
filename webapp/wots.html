@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-<title>Real Estate Reccomender</title>
+<title>Real Estate Recommender</title>
 <meta name="description" content="Real Estate Recommender">
 <meta name="author" content="Emre Ozdemir">
 
@@ -16,7 +16,7 @@
   <link rel="stylesheet" type="text/css"
         href="{{ url_for('static', filename='css/bootstrap.css') }}">
 
-  <script src="http://maps.google.com/maps/api/js?key=APICODEHERE"
+  <script src="http://maps.google.com/maps/api/js?key=APIKEY"
           type="text/javascript"></script>
 
 </head>
@@ -39,46 +39,144 @@
             <p class="form-control-static">minimum bedroom:</p>
           </div>
           <div class="form-group">
-            <input class="form-control" id="minbed" maxlength="4" size="4"></input>
+            <select id="minbed">
+              <option value = 0>0</option>
+              <option value = 1>1</option>
+              <option value = 2>2</option>
+              <option value = 3>3</option>
+              <option value = 4>4</option>
+            </select>
+<!--            <input class="form-control" id="minbed" maxlength="4" size="4"></input> -->
           </div>
           <div class="form-group">
-            <p class="form-control-static">maximum bedroom:</p>
+            <p class="form-control-static">minimum bathroom:</p>
           </div>
           <div class="form-group">
-            <input class="form-control" id="maxbed" maxlength="4" size="4"></input>
+            <select id="minbath">
+              <option value = 0>0</option>
+              <option value = 1>1</option>
+              <option value = 2>2</option>
+              <option value = 3>3</option>
+              <option value = 4>4</option>
+            </select>
+<!--            <input class="form-control" id="minbath" maxlength="4" size="4"></input> -->
           </div>
           </p>
 
           <p>
           <div class="form-group">
-            <p class="form-control-static" >minimum bathroom:</p>
+            <p class="form-control-static" >property type:</p>
           </div>
           <div class="form-group">
-            <input class="form-control" id="minbath" maxlength="4" size="4"></input>
-          </div>
-          <div class="form-group">
-            <p class="form-control-static">maximum bathroom:</p>
-          </div>
-          <div class="form-group">
-            <input class="form-control" id="maxbath" maxlength="4" size="4"></input>
+<!--            <input class="form-control" id="proptype" maxlength="20" size="20"></input> -->
+              <select id="proptype">
+                <option value="Residential">Residential</option>
+                <option value="Condominium">Condominium</option>
+                <option value="Townhouse">Townhouse</option>
+                <option value="Multi-Family">Multi Family</option>
+                <option value="Vacant Land">Other</option>
+              </select>
           </div>
           </p>
-
-          <p>
-          <div class="form-group">
-            <p class="form-control-static">property type:</p>
-          </div>
-          <div class="form-group">
-            <input class="form-control" id="proptype" maxlength="20" size="20"></input>
-          </div>
-          <p/>
 
           <p>
           <div class="form-group">
             <p class="form-control-static">neighborhood:</p>
           </div>
           <div class="form-group">
-            <input class="form-control" id="neighborhood" maxlength="20" size="20"></input>
+<!--            <input class="form-control" id="neighborhood" maxlength="20" size="20"></input> -->
+              <select id="neighborhood">
+                <option value="Alki">Alki</option>
+                <option value="Arbor Heights">Arbor Heights</option>
+                <option value="Atlantic">Atlantic</option>
+                <option value="Ballard">Ballard</option>
+                <option value="Beacon Hill">Beacon Hill</option>
+                <option value="Belltown">Belltown</option>
+                <option value="Broadview / Bitter Lake">Broadview / Bitter Lake</option>
+                <option value="Broadway (Capitol Hill)">Broadway (Capitol Hill)</option>
+                <option value="Cedar Park / Meadowbrook">Cedar Park / Meadowbrook</option>
+                <option value="Columbia City">Columbia City</option>
+                <option value="Downtown (Central Business District)">Downtown (Central Business District)</option>
+                <option value="East Queen Anne">East Queen Anne</option>
+                <option value="Eastlake">Eastlake</option>
+                <option value="Fairmount Park">Fairmount Park</option>
+                <option value="Fauntleroy">Fauntleroy</option>
+                <option value="Fremont">Fremont</option>
+                <option value="Gatewood">Gatewood</option>
+                <option value="Genesee">Genesee</option>
+                <option value="Georgetown">Georgetown</option>
+                <option value="Green Lake">Green Lake</option>
+                <option value="Haller Lake">Haller Lake</option>
+                <option value="Harrison / Denny Blaine">Harrison / Denny Blaine</option>
+                <option value="High Point">High Point</option>
+                <option value="Highland Park">Highland Park</option>
+                <option value="Interbay">Interbay</option>
+                <option value="International District">International District</option>
+                <option value="Laurelhurst / Sand Point">Laurelhurst / Sand Point</option>
+                <option value="Leschi">Leschi</option>
+                <option value="Licton Springs">Licton Springs</option>
+                <option value="Lower Queen Anne">Lower Queen Anne</option>
+                <option value="Madison Park">Madison Park</option>
+                <option value="Madrona">Madrona</option>
+                <option value="Magnolia">Magnolia</option>
+                <option value="Mann">Mann</option>
+                <option value="Minor">Minor</option>
+                <option value="Montlake">Montlake</option>
+                <option value="Mount Baker">Mount Baker</option>
+                <option value="North Admiral">North Admiral</option>
+                <option value="North Beach Blue Ridge">North Beach Blue Ridge</option>
+                <option value="North Beacon Hilll">North Beacon Hill</option>
+                <option value="North Delridge">North Delridge</option>
+                <option value="North Queen Anne">North Queen Anne</option>
+                <option value="Northgate">Northgate</option>
+                <option value="Olympic Hills / Victory Heights">Olympic Hills / Victory Heights</option>
+                <option value="Phinney Ridge / Greenwood">Phinney Ridge / Greenwood</option>
+                <option value="Pike Market">Pike Market</option>
+                <option value="Pioneer Square">Pioneer Square</option>
+                <option value="Portage Bay">Portage Bay</option>
+                <option value="Rainier Beach">Rainier Beach</option>
+                <option value="Ravenna / Bryant">Ravenna / Bryant</option>
+                <option value="Riverview">Riverview</option>
+                <option value="Roxhill">Roxhill</option>
+                <option value="Seaview">Seaview</option>
+                <option value="Seward Park">Seward Park</option>
+                <option value="South Beacon Hill">South Beacon Hill</option>
+                <option value="South Delridge">South Delridge</option>
+                <option value="South Lake Union">South Lake Union</option>
+                <option value="South Park">South Park</option>
+                <option value="Stevens (Capitol Hill)">Stevens (Capitol Hill)</option>
+                <option value="Sunset Hill">Sunset Hill</option>
+                <option value="University District">University District</option>
+                <option value="Wallingford">Wallingfordl</option>
+                <option value="Wedgeview Ridge">Wedgeview Ridge</option>
+                <option value="West Queen Anne">West Queen Anne</option>
+                <option value="Westlake">Westlake</option>
+                <option value="Whittier Heights">Whittier Heights</option>
+                <option value="Yesler Terrace">Yesler Terrace</option>
+              </select>
+          </div>
+          </p>
+
+          <p>
+          <div class="form-group">
+            <p class="form-control-static">maximum price:</p>
+          </div>
+          <div class="form-group">
+              <select id="maxprice">
+                <option value = 100000>$100,000</option>
+                <option value = 200000>$200,000</option>
+                <option value = 300000>$300,000</option>
+                <option value = 400000>$400,000</option>
+                <option value = 500000>$500,000</option>
+                <option value = 600000>$600,000</option>
+                <option value = 700000>$700,000</option>
+                <option value = 800000>$800,000</option>
+                <option value = 900000>$900,000</option>
+                <option value = 1000000>$1,000,000</option>
+                <option value = 1500000>$1,500,000</option>
+                <option value = 2000000>$2,000,000</option>
+              </select>
+<!--            <input class="form-control" id="maxprice" maxlength="20" size="20"></input> -->
           </div>
           <p/>
 
@@ -87,13 +185,16 @@
           </div>
         <div>
       <div>
-      <div class="row">
-        <!-- The span has an id so that later we can fill in the solution
-             using js. -->
-        <p> Selected Listings: <span id="Listings"></span> </p>
-    </div>
 
-    <div id="map"  style="left: 500px; bottom:60px; position: absolute; width: 250px; height: 250px;"></div>
+      <div id="map" style="display:block; left: 425px; top:-275px; position: relative;width: 300px; height: 350px;"></div>
+
+        <div class = "table">
+         <h3 style="margin-top:-12em;"> Selected Listings:</h3>
+          <table id="table" style="width:60%;border: 1px solid #eeeeee;" ></table>
+          <input type="button" name="OK" class="ok" value="OK"/>
+        <div>
+
+
 
 <!--    <script type="text/javascript">
       var locations = [['$819,950', 47.674609999999994, -122.38545900000001],

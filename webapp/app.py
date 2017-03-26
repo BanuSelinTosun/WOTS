@@ -9,42 +9,44 @@ df_reviews=pd.read_csv('data/street_reviews.csv')
 df_reviews.drop('Unnamed: 0', axis=1, inplace=True)
 df_sample=pd.read_csv('data/data_seattle.csv')
 df_sample.drop('Unnamed: 0', axis=1, inplace=True)
-column_names = ['bed','bath','address','neighborhood','price'] # 'address','neighborhood','price'
-recsys =S.ReccomnderSystem(df_sample,df_reviews)
+column_names = ['bed','bath','address','street_neighborhood','price']
+recsys =S.RecommenderSystem(df_sample,df_reviews)
 
 
 app = Flask(__name__)
 
 @app.route('/', methods =['GET'])
 def index():
-    return render_template('wos.html')
+    return render_template('wots.html')
 
 @app.route('/solve', methods=['POST'])
 def solve():
     user_data = request.json
-    minbed,maxbed,minbath,maxbath,proptype,neighborhood = (user_data['minbed'],
-                                                          user_data['maxbed'],
+    minbed, minbath, proptype, neighborhood, maxprice = (
+                                                          user_data['minbed'],
                                                           user_data['minbath'],
-                                                          user_data['maxbath'],
                                                           user_data['proptype'],
-                                                          user_data['neighborhood'])
+                                                          user_data['neighborhood'],
+                                                          user_data['maxprice']
+                                                          )
 
-    return _return_selected(minbed,maxbed,minbath,maxbath,proptype,neighborhood)
+    return _return_selected(minbed, minbath, proptype, neighborhood, maxprice)
 
 
-def _return_selected(minbed,maxbed,minbath,maxbath,proptype,neighborhood):
-    selected_list=recsys.input_func(minbed, maxbed, minbath, maxbath, proptype, neighborhood)
+def _return_selected(minbed, minbath, proptype, neighborhood, maxprice):
+    selected_list=recsys.input_func(minbed, minbath, proptype, neighborhood, maxprice)
     if type(selected_list)==list:
         df = df_sample[df_sample['id'].isin(selected_list)][column_names]
         df=df.head(5)
 
-        return jsonify([
-            df.to_html(index=False, classes='table'),
-            _create_location_list(df_sample,selected_list)
+        return jsonify({
+            'table' : df.to_html(index=False, classes='table'),
+            'loc_list':_create_location_list(df_sample,selected_list),
+            'lat_long':_lat_lng(df_sample,selected_list)
 
-            ])
+            })
     else:
-        return "Sorry, no match found. Please change your search options and try again :)"
+        return jsonify({'table' : 'Sorry, no match found. Please change your search options and try again :)'})
 
 
 def _create_location_list(df_sample,selected_list):
@@ -54,7 +56,7 @@ def _create_location_list(df_sample,selected_list):
 def _lat_lng(df_sample,selected_list):
     lat = np.mean(df_sample['latitude'][df_sample['id'].isin(selected_list)].values)
     lng = np.mean(df_sample['longitude'][df_sample['id'].isin(selected_list)].values)
-    return (lat,lng)
+    return {'lat':lat,'lng':lng}
 
 
 if __name__ == '__main__':
