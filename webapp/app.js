@@ -26,9 +26,27 @@ let send_options_json = function(options) {
 
 let display_solutions = function(solutions) {
     $("table#table").html(solutions)
-
+    let selected_listing = Array.from($("tr")).forEach((el) => {
+      const listing_id = $(el).children(':first').text()
+      const recommend = () => {
+        send_listing_id(listing_id)
+      }
+      el.addEventListener('click', recommend)
+    })
 };
 
+let send_listing_id = function(listing_id) {
+    $.ajax({
+        url: '/recommend',
+        contentType: "application/json; charset=utf-8",
+        type: 'POST',
+        success: function (data) {
+            display_solutions(data['table']);
+            build_map(data['loc_list'],data['lat_long'])
+        },
+        data: listing_id
+    });
+};
 
   var locations = [['$819,950', 47.674609999999994, -122.38545900000001],
 ['$749,950', 47.671803000000004, -122.38584099999999],
@@ -81,12 +99,5 @@ $(document).ready(function() {
 
 })
 
-$("#table tr").click(function(){
-   $(this).addClass('selected').siblings().removeClass('selected');
-   var value=$(this).find('td:first').html();
-   alert(value);
-});
-
-$('.ok').on('click', function(e){
-    alert($("#table tr.selected td:first").html());
-});
+// $("td").click(function(e) {
+//      console.log(e.target.tagName);  });
