@@ -9,7 +9,8 @@ df_reviews=pd.read_csv('data/street_reviews.csv')
 df_reviews.drop('Unnamed: 0', axis=1, inplace=True)
 df_sample=pd.read_csv('data/data_seattle.csv')
 df_sample.drop('Unnamed: 0', axis=1, inplace=True)
-column_names = ['bed','bath','address','street_neighborhood','price']
+column_names = ['id','bed','bath','address','street_neighborhood','price']
+new_col_names = ['ID','Bedroom','Batroom', 'Address', "Neighborhood", "Price"]
 recsys =S.RecommenderSystem(df_sample,df_reviews)
 
 
@@ -33,11 +34,23 @@ def solve():
     return _return_selected(minbed, minbath, proptype, neighborhood, maxprice)
 
 
+@app.route('/recommend', methods=['POST'])
+def recommend():
+    user_data = request.json
+    print user_data
+    print type(user_data)
+    listing_id = int(user_data)
+    return _recommend(listing_id)
+
+
 def _return_selected(minbed, minbath, proptype, neighborhood, maxprice):
     selected_list=recsys.input_func(minbed, minbath, proptype, neighborhood, maxprice)
     if type(selected_list)==list:
         df = df_sample[df_sample['id'].isin(selected_list)][column_names]
-        df=df.head(5)
+        df.sort_values('price',ascending=True,inplace=True)
+        df['price'] = df['price'].apply(lambda x: '${:,.0f}'.format(x))
+        df.columns = new_col_names
+        df=df.head(7)
 
         return jsonify({
             'table' : df.to_html(index=False, classes='table'),
@@ -51,12 +64,30 @@ def _return_selected(minbed, minbath, proptype, neighborhood, maxprice):
 
 def _create_location_list(df_sample,selected_list):
     df_plot = df_sample[df_sample['id'].isin(selected_list)]
+    df_plot['price'] = df_plot['price'].apply(lambda x: '${:,.0f}'.format(x))
     return df_plot[['price','latitude','longitude']].values.tolist()
 
 def _lat_lng(df_sample,selected_list):
     lat = np.mean(df_sample['latitude'][df_sample['id'].isin(selected_list)].values)
     lng = np.mean(df_sample['longitude'][df_sample['id'].isin(selected_list)].values)
     return {'lat':lat,'lng':lng}
+
+def _recommend(listing_id):
+    selected_list = recsys.listing_recommender(listing_id)
+    if type(selected_list)==list:
+        df = df_sample[df_sample['id'].isin(selected_list)][column_names]
+        df.sort_values('price',ascending=True,inplace=True)
+        df['price'] = df['price'].apply(lambda x: '${:,.0f}'.format(x))
+        df.columns = new_col_names
+        df=df.head(7)
+        return jsonify({
+            'table' : df.to_html(index=False, classes='table'),
+            'loc_list':_create_location_list(df_sample,selected_list),
+            'lat_long':_lat_lng(df_sample,selected_list)
+
+            })
+    else:
+        return jsonify({'table' : 'Sorry, no match found. Please change your search options and try again :)'})
 
 
 if __name__ == '__main__':
