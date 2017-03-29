@@ -5,4 +5,6 @@ WOTS is an NLP based real-estate recommender to help home buyers to find their d
 ## Why WOTS?
 The Seattle housing market continues to grow and real estate companies are using data to create more effective listings. Home buyers need a more easily quantifiable method for finding their dream home beyond basic information such as square footage, number of bedrooms, etc. Rather than looking nearby listings WOTS compare listings based on their text descriptions and recommends similar style of the homes based on buyer's interest. In addition, WOTS compares neighborhoods based on your potential neighbors' reviews and recommends similar style homes in alternative neighborhoods that have the similar vibes buyers are interested in.
 
-![](img/wots_app.png)
+![](img/wots_record.gif)
+
+![](img/download.jpeg) ![](img/sckitlearn.png) ![](img/mongo.png) ![](img/NLTK.png) ![](img/flask.png)
