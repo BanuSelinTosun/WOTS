@@ -7,7 +7,7 @@ from flask import Flask, render_template,request,jsonify
 
 df_reviews=pd.read_csv('data/street_reviews.csv')
 df_reviews.drop('Unnamed: 0', axis=1, inplace=True)
-df_sample=pd.read_csv('data/data_seattle.csv')
+df_sample=pd.read_csv('data/data_active_clean.csv')
 df_sample.drop('Unnamed: 0', axis=1, inplace=True)
 column_names = ['id','bed','bath','address','street_neighborhood','price']
 new_col_names = ['ID','Bedroom','Batroom', 'Address', "Neighborhood", "Price"]
@@ -37,8 +37,6 @@ def solve():
 @app.route('/recommend', methods=['POST'])
 def recommend():
     user_data = request.json
-    print user_data
-    print type(user_data)
     listing_id = int(user_data)
     return _recommend(listing_id)
 
@@ -65,7 +63,8 @@ def _return_selected(minbed, minbath, proptype, neighborhood, maxprice):
 def _create_location_list(df_sample,selected_list):
     df_plot = df_sample[df_sample['id'].isin(selected_list)]
     df_plot['price'] = df_plot['price'].apply(lambda x: '${:,.0f}'.format(x))
-    return df_plot[['price','latitude','longitude']].values.tolist()
+    df_plot['id'] = df_plot['id'].apply(lambda x : str(x))
+    return df_plot[['id','latitude','longitude','url']].values.tolist()
 
 def _lat_lng(df_sample,selected_list):
     lat = np.mean(df_sample['latitude'][df_sample['id'].isin(selected_list)].values)
