@@ -4,13 +4,27 @@ from recommender import Listingrecommender
 
 class RecommenderSystem(object):
     def __init__(self,df_sample,df_reviews):
+        """
+        INPUT:
+        -df_sample: sample listing data set
+        -df_reviews:neighborhood reviews data set
+
+        ATTRIBUTES:
+        - df_select:selected listings based on number of minimum bedroom.
+                    number of minimum bathroom, property type, neighborhood
+                    and maximum price
+        - recommender_dictionary: recomended listings;
+                               keys=neighborhood, values=listing id
+        - class_freq: the frequency of each class in the data
+        - p: the number of features
+        """
         self.df_sample = df_sample
         self.df_reviews = df_reviews
         self.df_select = None
 
         self.recommender_dictionary={}
 
-        self.listings = None
+#        self.listings = None
         self.alt_neig_1 = None
         self.alt_neig_2 = None
 
@@ -23,9 +37,21 @@ class RecommenderSystem(object):
         nrec = Listingrecommender(self.df_reviews)
         self.neighborhood_dict = nrec.top_three_dictionary(df_reviews['reviews'].values,
                                                       df_reviews['name'].values,
-                                                      posttagged = True)
+                                                      postagged = True)
 
     def input_func(self,minbed, minbath, proptype, neighborhood, maxprice):
+        '''
+        INPUT
+        -minbed: int
+        -minbath: int
+        -proptype : string
+        -neighborhood: string
+        -maxprice: int
+
+
+        OUTPUT:
+        -similatiry_dict : list of int (matching listing ids)
+        '''
         self.minbed = minbed
         self.minbath = minbath
         self.proptype = proptype
@@ -39,6 +65,13 @@ class RecommenderSystem(object):
             return self.df_select['id'].values.tolist()
 
     def user_select(self, neighborhood_):
+        '''
+        INPUT
+        -neighborhood_: string
+
+        OUTPUT:
+        NONE
+        '''
 
         self.df_select = self.df_sample[(self.df_sample['bed']>=self.minbed) &
                                   (self.df_sample['bed']>=self.minbath) &
@@ -52,16 +85,36 @@ class RecommenderSystem(object):
 
 ## IF ONE
     def if_one(self):
+        '''
+        INPUT: NONE
+        OUTPUT: NONE
+        (updates the recommender_dictionary with an empty list if there is only
+        one listing available in the alternative neighborhood)
+        '''
         self.recommender_dictionary[self.df_select['id'].values[0]]=[]
 
 ## IF TWO OR THREE
     def if_less_than_three(self):
+        '''
+        INPUT: NONE
+        OUTPUT: NONE
+        (updates the recommender_dictionary with one or two listings if there is
+        only two three available listings in the alternative neighborhood)
+        '''
         for i in range(self.df_select.shape[0]):
             self.recommender_dictionary[self.df_select['id'].values[i]]\
                             = np.setdiff1d(self.df_select['id'].values,
                               self.df_select['id'].values[i]).tolist()
 # IF THREE
     def if_more_than_three(self,alt_,alt_id_):
+        '''
+        INPUT:
+        -alt_ :  TRUE if it is an alternative neighborhood
+        -altid_: the id of the selected listing in the alternative neighborhood
+        OUTPUT: NONE
+        (updates the recommender_dictionary with two other similar listings in
+        the alternative neighborhood)
+        '''
         rec=Listingrecommender(self.df_sample)
         self.recommender_dictionary\
                 = rec.top_three_dictionary(self.df_select['remarks'].values,
@@ -72,7 +125,6 @@ class RecommenderSystem(object):
 
 ## PART I - User Input
     def same_neighborhood_recommender(self,alt_=False, alt_id_=None):
-
         self.user_select(self.neighborhood)
 
         if self.df_select.shape[0]==1:
