@@ -7,4 +7,4 @@ The Seattle housing market continues to grow and real estate companies are using
 
 ![](img/wots_record.gif)
 
-![](img/download.jpeg) ![](img/sckitlearn.png)
+![](img/tools.png)
