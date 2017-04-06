@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import string
-#NLP
+#NLP 
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer

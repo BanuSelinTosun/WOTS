@@ -105,7 +105,7 @@ class RecommenderSystem(object):
             self.recommender_dictionary[self.df_select['id'].values[i]]\
                             = np.setdiff1d(self.df_select['id'].values,
                               self.df_select['id'].values[i]).tolist()
-# IF THREE
+# IF THREE 
     def if_more_than_three(self,alt_,alt_id_):
         '''
         INPUT:
