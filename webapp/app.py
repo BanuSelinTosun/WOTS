@@ -42,6 +42,20 @@ def recommend():
 
 
 def _return_selected(minbed, minbath, proptype, neighborhood, maxprice):
+    """ Returns real-estate listing table and locations (latitudes and longitudes)
+    ARGS:
+        minbed (int) = minimum number of bedroom
+        minbath (int) = minimum number of bathroom
+        proptype (string) = property type
+        neighborhood (string) = neighborhood name
+        maxprice (int) = maxiumum real-estate listing price
+
+    RETURNS:
+        table (html) : listing table
+        loc_list (list) : list of 'id','latitude','longitude','url' of the tabulated listings
+        lat_long (dict) : central 'latitude','longitude' of tabulated listings
+    """
+
     selected_list=recsys.input_func(minbed, minbath, proptype, neighborhood, maxprice)
     if type(selected_list)==list:
         df = df_sample[df_sample['id'].isin(selected_list)][column_names]
@@ -61,17 +75,42 @@ def _return_selected(minbed, minbath, proptype, neighborhood, maxprice):
 
 
 def _create_location_list(df_sample,selected_list):
+    """ Returns real-estate listing table and locations (latitudes and longitudes)
+    ARGS:
+        df_sample (DataFrame) = real-estate listing data frame
+        selected_list (int) = user selected listing id
+
+    RETURNS:
+        (list) : list of 'id','latitude','longitude','url' of the selected listing
+    """
     df_plot = df_sample[df_sample['id'].isin(selected_list)]
     df_plot['price'] = df_plot['price'].apply(lambda x: '${:,.0f}'.format(x))
     df_plot['id'] = df_plot['id'].apply(lambda x : str(x))
     return df_plot[['id','latitude','longitude','url']].values.tolist()
 
 def _lat_lng(df_sample,selected_list):
+    """
+    ARGS:
+        df_sample (DataFrame) = real-estate listing data frame
+        selected_list (int) = user selected listing id
+
+    RETURNS:
+        (dict) : central 'latitude','longitude' of tabulated listings
+    """
     lat = np.mean(df_sample['latitude'][df_sample['id'].isin(selected_list)].values)
     lng = np.mean(df_sample['longitude'][df_sample['id'].isin(selected_list)].values)
     return {'lat':lat,'lng':lng}
 
 def _recommend(listing_id):
+    """
+    ARGS:
+    listing_id (int) : selected listing id
+
+    RETURNS:
+        table (html) : recommended listing table
+        loc_list (list) : list of 'id','latitude','longitude','url' of the tabulated listings
+        lat_long (dict) : central 'latitude','longitude' of tabulated listings
+    """
     selected_list = recsys.listing_recommender(listing_id)
     if type(selected_list)==list:
         df = df_sample[df_sample['id'].isin(selected_list)][column_names]
