@@ -2,6 +2,5 @@
 /data
 .DS_Store
 /test
-/src
 .Rhistory
 .ipynb_checkpoints
